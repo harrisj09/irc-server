@@ -3,6 +3,8 @@ package com.github.harrisj09.irc.irc.controller;
 import com.github.harrisj09.irc.irc.controller.server.ChannelController;
 import com.github.harrisj09.irc.irc.controller.server.ChatController;
 import com.github.harrisj09.irc.irc.controller.server.UserController;
+import com.github.harrisj09.irc.irc.model.ChannelModel;
+import com.github.harrisj09.irc.irc.model.ChatModel;
 import com.github.harrisj09.irc.irc.model.data.Channel;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -17,8 +19,8 @@ import java.util.HashMap;
 public class ServerController {
 
     private HashMap<String, Channel> channels;
-    private ChannelController channelController;
-    private ChatController chatController;
+    private ChannelModel channelController;
+    private ChatModel chatController;
     private UserController userController;
 
     @GetMapping("/connect/{id}")
