@@ -10,8 +10,12 @@ public class Channel {
 
     public Channel(String channelName) {
         this.channelName = channelName;
-        this.messageList = new ArrayList<>(80);
+        this.messageList = new ArrayList<>(50);
     }
 
-
+/*    public String chatRoom() {
+        String result = messageList.stream()
+                .map(n -> n)
+        return "";
+    }*/
 }
