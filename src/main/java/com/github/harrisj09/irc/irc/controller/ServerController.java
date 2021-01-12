@@ -1,40 +1,52 @@
 package com.github.harrisj09.irc.irc.controller;
 
-import com.github.harrisj09.irc.irc.controller.server.ChannelController;
-import com.github.harrisj09.irc.irc.controller.server.ChatController;
-import com.github.harrisj09.irc.irc.controller.server.UserController;
 import com.github.harrisj09.irc.irc.model.ChannelModel;
 import com.github.harrisj09.irc.irc.model.ChatModel;
+import com.github.harrisj09.irc.irc.model.UserModel;
 import com.github.harrisj09.irc.irc.model.data.Channel;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
+import com.github.harrisj09.irc.irc.model.data.Message;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.HashMap;
+import java.util.List;
 
 @RestController
 public class ServerController {
 
-    private HashMap<String, Channel> channels;
-    private ChannelModel channelController;
-    private ChatModel chatController;
-    private UserController userController;
+    @Autowired
+    private ChannelModel channelModel;
+    @Autowired
+    private ChatModel chatModel;
+    @Autowired
+    private UserModel userModel;
 
-    @GetMapping("/connect/{id}")
-    public String test(@PathVariable String id, HttpServletRequest request) {
+    @GetMapping("connect/{id}")
+    public String connect(@PathVariable String id, HttpServletRequest request) {
+        // check if theres already someone with a username
+        // if not return users in server
+        // and channel names
 
-        /*
-        It'll check your user name
-        If it doesn't come up in the list of usernames already registered it sends you this info
-        {channelName, urlToChannel}
-        {urlToUsersList}
-        the url to channel allows you to grab the messages of each one
-         */
-        String ip = request.getRemoteAddr();
-        System.out.println(ip);
         return id;
+    }
+
+    @GetMapping("channels/{channelId}/latest")
+    public ResponseEntity<List<Message>> getLatestChannelMessages(@PathVariable String channelId) {
+        Channel channel = channelModel.getChannel(channelId);
+        if(channel == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return new ResponseEntity<>(channel.getLatestMessages(), HttpStatus.OK);
+    }
+
+    @PostMapping("channels/{channelId}")
+    public ResponseEntity<String> createChannel(@PathVariable String id) {
+        Channel channel = channelModel.getChannel(id);
+        if(channel == null) {
+            return ResponseEntity.ok(channelModel.addChannel(id).getChannelName());
+        }
+        return new ResponseEntity<>(HttpStatus.CONFLICT);
     }
 }

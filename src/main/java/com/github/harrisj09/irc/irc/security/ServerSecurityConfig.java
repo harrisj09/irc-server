@@ -1,45 +1,67 @@
 package com.github.harrisj09.irc.irc.security;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
-/*
+import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 
- https://www.baeldung.com/spring-security-basic-authentication
+/*
+https://spring.io/guides/gs/securing-web/#scratch
+
+https://www.baeldung.com/spring-security-basic-authentication
  */
 @Configuration
 @EnableWebSecurity
 public class ServerSecurityConfig extends WebSecurityConfigurerAdapter {
 
-    @Autowired
-    private MyBasicAuthenticationEntryPoint authenticationEntryPoint;
+    @Value("${admin.username}")
+    private String username;
+    @Value("${admin.password}")
+    private String password;
 
     @Autowired
     public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
         auth.inMemoryAuthentication()
-                .withUser("user1").password(passwordEncoder().encode("user1Pass"))
+                .withUser(username).password(passwordEncoder().encode(password))
                 .authorities("ROLE_USER");
     }
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.authorizeRequests()
-                .antMatchers("/securityNone").permitAll()
-                .anyRequest().authenticated()
+        http.csrf().disable().authorizeRequests()
+                .antMatchers("/admin/**").authenticated()
+                .anyRequest().permitAll()
                 .and()
                 .httpBasic()
-                .authenticationEntryPoint(authenticationEntryPoint);
+                .realmName("irc-server");
 
 /*        http.addFilterAfter(new CustomFilter(),
-                BasicAuthenticationFilter.class);*/
+                BasicAuthenticationFilter.class);
+                */
     }
+
+    /*@Bean
+    @Override
+    public UserDetailsService userDetailsService() {
+        UserDetails user =
+                User.withDefaultPasswordEncoder()
+                        .username(username)
+                        .password("password")
+                        .roles("USER")
+                        .build();
+
+        return new InMemoryUserDetailsManager(user);
+    }*/
 
     @Bean
     public PasswordEncoder passwordEncoder() {
