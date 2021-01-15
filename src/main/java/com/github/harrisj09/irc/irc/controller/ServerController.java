@@ -24,29 +24,45 @@ public class ServerController {
     private UserModel userModel;
 
     @GetMapping("connect/{id}")
-    public String connect(@PathVariable String id, HttpServletRequest request) {
+    public ResponseEntity<String> connect(@PathVariable String id, HttpServletRequest request) {
         // check if theres already someone with a username
         // if not return users in server
         // and channel names
-
-        return id;
+        if (userModel.getUsers().contains(id)) {
+            return new ResponseEntity<>(HttpStatus.CONFLICT);
+        }
+        String result = "";
+        // do foreach and grab the info of server names and clients
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @GetMapping("channels/{channelId}/latest")
     public ResponseEntity<List<Message>> getLatestChannelMessages(@PathVariable String channelId) {
         Channel channel = channelModel.getChannel(channelId);
         if(channel == null) {
+            // if this is returned have the user delete the channel
             return ResponseEntity.notFound().build();
         }
         return new ResponseEntity<>(channel.getLatestMessages(), HttpStatus.OK);
     }
 
+
     @PostMapping("channels/{channelId}")
-    public ResponseEntity<String> createChannel(@PathVariable String id) {
-        Channel channel = channelModel.getChannel(id);
+    public ResponseEntity<String> createChannel(@PathVariable String channelId) {
+        Channel channel = channelModel.getChannel(channelId);
         if(channel == null) {
-            return ResponseEntity.ok(channelModel.addChannel(id).getChannelName());
+            return ResponseEntity.ok(channelModel.addChannel(channelId).getChannelName());
         }
         return new ResponseEntity<>(HttpStatus.CONFLICT);
+    }
+
+    @PostMapping("channels/{channelId}/{user}/{message}")
+    public ResponseEntity<String> sendMessage(@PathVariable String channelId, @PathVariable String user, @PathVariable String message) {
+        Channel channel = channelModel.getChannel(channelId);
+        if(channel == null) {
+            // if this is returned have the user delete the channel
+            return new ResponseEntity<>(HttpStatus.CONFLICT);
+        }
+        return null;
     }
 }

@@ -25,8 +25,8 @@ public class Channel {
         return channelName;
     }
 
-    public void addMessage(String user, String message) {
-        messageList.add(new Message(user, message));
+    public void addMessage(String user, String message, String id) {
+        messageList.add(new Message(user, message, id));
     }
 
     public List<Message> getLatestMessages() {

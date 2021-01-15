@@ -16,4 +16,8 @@ public class UserModel {
     }
 
     // When user connects check
+
+    public List<User> getUsers() {
+        return users;
+    }
 }
