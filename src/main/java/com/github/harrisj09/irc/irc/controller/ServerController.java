@@ -11,7 +11,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 public class ServerController {
@@ -24,17 +28,14 @@ public class ServerController {
     private UserModel userModel;
 
     @GetMapping("connect/{id}")
-    public ResponseEntity<String> connect(@PathVariable String id, HttpServletRequest request) {
-        // check if theres already someone with a username
-        // if not return users in server
-        // and channel names
+    public ResponseEntity<Collection<String>> connect(@PathVariable String id, HttpServletRequest request) {
         if (userModel.getUsers().contains(id)) {
+            // User already exists
             return new ResponseEntity<>(HttpStatus.CONFLICT);
         }
-        String result = "";
-        // do foreach and grab the info of server names and clients
-        return new ResponseEntity<>(HttpStatus.OK);
+        return new ResponseEntity<>(new ArrayList<>(channelModel.getChannels().keySet()), HttpStatus.OK);
     }
+
 
     @GetMapping("channels/{channelId}/latest")
     public ResponseEntity<List<Message>> getLatestChannelMessages(@PathVariable String channelId) {
@@ -47,6 +48,7 @@ public class ServerController {
     }
 
 
+    // TODO Fix this and move it to a different class
     @PostMapping("channels/{channelId}")
     public ResponseEntity<String> createChannel(@PathVariable String channelId) {
         Channel channel = channelModel.getChannel(channelId);

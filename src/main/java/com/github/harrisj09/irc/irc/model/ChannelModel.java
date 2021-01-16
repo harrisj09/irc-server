@@ -16,6 +16,10 @@ public class ChannelModel {
         return channel;
     }
 
+    public HashMap<String, Channel> getChannels() {
+        return channels;
+    }
+
     public Channel getChannel(String channelId) {
         return channels.get(channelId);
     }
