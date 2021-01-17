@@ -16,8 +16,11 @@ public class UserModel {
     }
 
     // When user connects check
-
     public List<User> getUsers() {
         return users;
+    }
+
+    public void kickUser(String user) {
+        users.remove(user);
     }
 }

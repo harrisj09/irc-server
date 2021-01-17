@@ -5,12 +5,10 @@ import java.net.InetAddress;
 public class User {
 
     private String userName;
-    private String ipAddress;
     private InetAddress ip;
 
-    public User(String userName, String ipAddress, InetAddress ip) {
+    public User(String userName, InetAddress ip) {
         this.userName = userName;
-        this.ipAddress = ipAddress;
         this.ip = ip;
     }
 }

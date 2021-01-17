@@ -1,19 +1,21 @@
 package com.github.harrisj09.irc.irc.model.data;
 
+import java.util.UUID;
+
 public class Message {
 
 
     private String user;
     private String message;
-    private String id;
+    private UUID id;
 
-    public Message(String user, String message, String id) {
+    public Message(String user, String message) {
         this.user = user;
         this.message = message;
-        this.id = id;
+        this.id = UUID.randomUUID();
     }
 
-    public String getId() {
+    public UUID getId() {
         return id;
     }
 
