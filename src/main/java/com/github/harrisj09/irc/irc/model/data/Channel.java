@@ -2,6 +2,7 @@ package com.github.harrisj09.irc.irc.model.data;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.Stream;
 
 public class Channel {
 
@@ -33,8 +34,8 @@ public class Channel {
         return messageList;
     }
 
-/*    public String chatRoom() {
-        String result = messageList.stream()
+    /*public String chatRoom() {
+        Stream<Object> result = messageList.stream()
                 .map(n -> n)
         return "";
     }*/

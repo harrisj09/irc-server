@@ -5,6 +5,7 @@ import com.github.harrisj09.irc.irc.model.ChatModel;
 import com.github.harrisj09.irc.irc.model.UserModel;
 import com.github.harrisj09.irc.irc.model.data.Channel;
 import com.github.harrisj09.irc.irc.model.data.Message;
+import com.github.harrisj09.irc.irc.model.data.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,6 +15,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -29,14 +32,21 @@ public class ServerController {
     private UserModel userModel;
 
     @GetMapping("connect/{id}")
-    public ResponseEntity<Collection<String>> connect(@PathVariable String id, HttpServletRequest request) {
-        if (userModel.getUsers().contains(id)) {
+    public ResponseEntity<Collection<String>> connect(@PathVariable String id, HttpServletRequest request) throws UnknownHostException {
+        if (userModel.getUsers().stream().anyMatch(o -> o.getUserName().equals(id))) {
             // User already exists
             return new ResponseEntity<>(HttpStatus.CONFLICT);
         }
+        userModel.getUsers().add(new User(id, request.getRemoteAddr()));
+        channelModel.addChannel("hello");
+        channelModel.addChannel("test");
         return new ResponseEntity<>(new ArrayList<>(channelModel.getChannels().keySet()), HttpStatus.OK);
     }
 
+    @GetMapping("connect/users")
+    public ResponseEntity<List<User>> grabUsers() {
+        return new ResponseEntity<>(new ArrayList<>(userModel.getUsers()), HttpStatus.OK);
+    }
 
     @GetMapping("channels/{channelId}/latest")
     public ResponseEntity<List<Message>> getLatestChannelMessages(@PathVariable String channelId) {
@@ -46,17 +56,6 @@ public class ServerController {
             return ResponseEntity.notFound().build();
         }
         return new ResponseEntity<>(channel.getLatestMessages(), HttpStatus.OK);
-    }
-
-
-    // TODO Fix this and move it to a different class
-    @PostMapping("channels/{channelId}")
-    public ResponseEntity<String> createChannel(@PathVariable String channelId) {
-        Channel channel = channelModel.getChannel(channelId);
-        if(channel == null) {
-            return ResponseEntity.ok(channelModel.addChannel(channelId).getChannelName());
-        }
-        return new ResponseEntity<>(HttpStatus.CONFLICT);
     }
 
     @PostMapping("channels/{channelId}/{user}/{message}")
