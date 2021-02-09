@@ -43,6 +43,11 @@ public class ServerController {
         return new ResponseEntity<>(new ArrayList<>(channelModel.getChannels().keySet()), HttpStatus.OK);
     }
 
+    @GetMapping("connect/servers")
+    public ResponseEntity<Collection<String>> servers() throws UnknownHostException {
+        return new ResponseEntity<>(new ArrayList<>(channelModel.getChannels().keySet()), HttpStatus.OK);
+    }
+
     @GetMapping("connect/users")
     public ResponseEntity<List<User>> grabUsers() {
         return new ResponseEntity<>(new ArrayList<>(userModel.getUsers()), HttpStatus.OK);
