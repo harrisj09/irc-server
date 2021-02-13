@@ -38,8 +38,6 @@ public class ServerController {
             return new ResponseEntity<>(HttpStatus.CONFLICT);
         }
         userModel.getUsers().add(new User(id, request.getRemoteAddr()));
-        channelModel.addChannel("hello");
-        channelModel.addChannel("test");
         return new ResponseEntity<>(new ArrayList<>(channelModel.getChannels().keySet()), HttpStatus.OK);
     }
 
@@ -73,4 +71,16 @@ public class ServerController {
         channel.addMessage(user, message);
         return new ResponseEntity<>(HttpStatus.OK);
     }
+
+    // TODO move this to admin and make it @PostMapping
+    @GetMapping("createchannel/{name}")
+    public ResponseEntity<String> createChannel(@PathVariable String name) {
+        Channel channel = channelModel.getChannel(name);
+        if (channel == null) {
+            channelModel.addChannel(name);
+            return new ResponseEntity<>(HttpStatus.OK);
+        }
+        return new ResponseEntity<>(HttpStatus.CONFLICT);
+    }
+
 }
