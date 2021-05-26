@@ -20,6 +20,7 @@ import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.logging.Logger;
 
 @RestController
 public class ServerController {
@@ -61,7 +62,7 @@ public class ServerController {
         return new ResponseEntity<>(channel.getLatestMessages(), HttpStatus.OK);
     }
 
-    @PostMapping("channels/{channelId}/{user}/{message}")
+    @GetMapping("channels/{channelId}/{user}/{message}")
     public ResponseEntity<String> sendMessage(@PathVariable String channelId, @PathVariable String user, @PathVariable String message) {
         Channel channel = channelModel.getChannel(channelId);
         if(channel == null) {
